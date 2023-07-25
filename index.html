@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Snake Game</title>
+    <script type="module">
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d", { alpha: false });
+        const dirs = { Right: [1, 0], Left: [-1, 0], Down: [0, 1], Up: [0, -1] };
+        const snake = [[8, 8]];
+        let apple = [4, 4];
+        let dir = [0, -1]; // Start moving up
+
+        document.onkeydown = (e) => {
+            dir = dirs[e.key.slice(5)] || dir;
+        };
+
+        setInterval(() => {
+            snake.unshift([snake[0][0] + dir[0] + 16 & 15, snake[0][1] + dir[1] + 16 & 15]);
+
+            if (snake[0][0] === apple[0] && snake[0][1] === apple[1]) {
+    // The snake has eaten the apple, so it should grow
+    // (No need to check for duplicates here)
+    apple = [Math.floor(Math.random() * 16), Math.floor(Math.random() * 16)];
+} else if (snake.slice(1).some(seg => seg[0] === snake[0][0] && seg[1] === snake[0][1])) {
+    // The snake has collided with itself, so remove the tail segment
+    snake.pop();
+} else {
+    // The snake keeps moving, so remove the tail segment to simulate movement
+    snake.pop();
+}
+
+
+            ctx.clearRect(0, 0, 256, 256);
+            ctx.fillStyle = "red";
+            ctx.fillRect(apple[0] * 16, apple[1] * 16, 16, 16);
+            ctx.fillStyle = "lime";
+            snake.forEach(([x, y]) => ctx.fillRect(x * 16, y * 16, 16, 16));
+        }, 125);
+    </script>
+</head>
+<body>
+    <canvas id="canvas" width="256" height="256"></canvas>
+</body>
+</html>
